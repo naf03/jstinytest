@@ -52,10 +52,13 @@ tests({
       eq(foundElement, undefined);
   },
   'It should run the callback on every index,not just those that have been assigned values': function(){
+    var numberOfTimesCallbackRan=0;
     var foundElement = find([,1,2], function(number){
+          numberOfTimesCallbackRan++;
           return number>1;
       });
       eq(foundElement, 2);
+      eq(numberOfTimesCallbackRan,3);
   }
 
 
