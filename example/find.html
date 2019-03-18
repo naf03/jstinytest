@@ -1,0 +1,63 @@
+<script src="../tinytest.js"></script>
+
+<script>
+
+function find(array, callback, optionalThis){
+    findCallback = callback;
+    if (optionalThis){
+        findCallback = callback.bind(optionalThis);
+    }
+    for (var i=0; i<array.length; i++){
+      if( findCallback(array[i],i,array) ){
+          return array[i];
+      }
+    }
+}
+
+tests({
+
+  'It should pass in the ith element as the first argument to the callback.': function(){
+    find([2], function(number){
+      eq(number, 2);
+    });
+  },
+  'It should pass in the ith position as the second argument to the callback.': function(){
+    find([2], function(number, index){
+      eq(index,0);
+    });
+  },
+  'It should pass in the original array as the third argument to the callback.': function(){
+    var testArray=[1,2,3];
+    find(testArray, function callback(number, index, originalArray){
+      eq(originalArray, testArray);
+    });
+  }, 
+  'It should accept a configurable object': function(){
+      find([2], function(){
+        // Inside of here, this should be equal to configurableThisObject.
+        // this.description should be equal to 'Configurable this object'.
+        eq(this.description, 'I am a configurable this object');
+      }, {description: 'I am a configurable this object'});
+  }, 
+  'It should return the value of the first element in the array where callback returns a true value': function(){
+      var foundElement = find([1,2,3], function(number){
+          return number>2;
+      });
+      eq(foundElement, 3);
+  },
+  'It should return undefined if none of the elements in the array satisfies the callback function': function(){
+    var foundElement = find([1,2,3], function(number){
+          return number>3;
+      });
+      eq(foundElement, undefined);
+  },
+  'It should run the callback on every index,not just those that have been assigned values': function(){
+    var foundElement = find([,1,2], function(number){
+          return number>1;
+      });
+      eq(foundElement, 2);
+  }
+
+
+});
+</script>
